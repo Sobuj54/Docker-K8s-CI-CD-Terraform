@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tax-service-a
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tax-service-a
+  template:
+    metadata:
+      labels:
+        app: tax-service-a
+    spec:
+      containers:
+        - name: tax-service-a
+          image: embarkx/tax-service-a
+          env:
+            - name: TAX_SERVICE_URL
+              value: "http://tax-service-b:4000"
+            - name: PORT
+              value: "3000"
+          # env:
+          #   - name: APP_MESSAGE
+          #     valueFrom:
+          #       configMapKeyRef:
+          #         name: node-config
+          #         key: APP_MESSAGE
+          #   - name: DB_PASSWORD
+          #     valueFrom:
+          #       secretKeyRef:
+          #         name: node-secret
+          #         key: DB_PASSWORD
+          #   - name: ENV_VALUE
+          #     valueFrom:
+          #       secretKeyRef:
+          #         name: node-secret
+          #         key: ENV_VALUE
+          ports:
+            - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tax-service-a
+spec:
+  selector:
+    app: tax-service-a
+  type: NodePort
+  ports:
+    - port: 3000
+      targetPort: 3000
+      nodePort: 31800
