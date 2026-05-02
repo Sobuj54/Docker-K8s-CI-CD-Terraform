@@ -1,0 +1,11 @@
+name: second-workflow
+
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run a test command
+        run: echo "second Workflow is valid"
